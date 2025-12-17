@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - All Requests</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { margin-bottom: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+
+<h1>Admin Dashboard - All Requests</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Services Requested</th>
+        </tr>
+    </thead>
+    <tbody id="requests-table-body"></tbody>
+</table>
+
+<script>
+async function loadRequests() {
+    try {
+        const response = await fetch("http://localhost:8080/api/requests");
+        if (!response.ok) throw new Error("Failed to fetch requests");
+
+        const requests = await response.json();
+        const tbody = document.getElementById("requests-table-body");
+        tbody.innerHTML = "";
+
+        requests.forEach(req => {
+            const services = req.services
+                .map(s => s.name)
+                .join(", ");
+
+            const row = `
+                <tr>
+                    <td>${req.id}</td>
+                    <td>${req.user.fullName}</td>
+                    <td>${req.user.email}</td>
+                    <td>${req.user.phone}</td>
+                    <td>${services}</td>
+                </tr>
+            `;
+
+            tbody.innerHTML += row;
+        });
+    } catch (err) {
+        console.error("Failed to load requests:", err);
+    }
+}
+
+loadRequests();
+</script>
+
+</body>
+</html>

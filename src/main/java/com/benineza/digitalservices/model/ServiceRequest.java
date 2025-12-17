@@ -1,86 +1,42 @@
 package com.benineza.digitalservices.model;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "service_requests")
 public class ServiceRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description;
-    private String status;
-
-    private LocalDateTime requestDate;
-
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    private Service service;
+    @ManyToMany
+    @JoinTable(
+        name = "service_request_services",
+        joinColumns = @JoinColumn(name = "request_id"),
+        inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private List<DigitalService> services;
 
-    @ManyToOne
-    private ITStaff assignedStaff;
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public ServiceRequest() {
-        this.requestDate = LocalDateTime.now();
-        this.status = "PENDING";
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getRequestDate() {
-        return requestDate;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Service getService() {
-        return service;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public ITStaff getAssignedStaff() {
-        return assignedStaff;
-    }
-
-    public void setAssignedStaff(ITStaff assignedStaff) {
-        this.assignedStaff = assignedStaff;
-    }
+    public List<DigitalService> getServices() { return services; }
+    public void setServices(List<DigitalService> services) { this.services = services; }
 }
